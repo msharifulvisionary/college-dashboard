@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নোটিশ সেকশন</title>
+    <style>
+        /* CSS Variables for consistent styling */
+        :root {
+            --white: #ffffff;
+            --radius: 12px;
+            --primary-color: #2563eb;
+            --secondary-color: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Main notice section container */
+        .noticesection {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .noticesection:hover {
+            transform: translateY(0);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Header section */
+        .noticesection-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .noticesection-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .noticesection-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Notice item container */
+        .noticesection-item {
+            background: var(--secondary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.2s ease;
+        }
+
+        .noticesection-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .noticesection-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Serial number styling */
+        .noticesection-serial {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* Headline styling */
+        .noticesection-headline {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        /* Description styling */
+        .noticesection-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* Date and download container */
+        .noticesection-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .noticesection-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Download button styling */
+        .noticesection-download {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .noticesection-download:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .noticesection-download:active {
+            transform: translateY(0);
+        }
+
+        /* Download icon */
+        .noticesection-download-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .noticesection {
+                width: 100%;
+                margin: 10px;
+                padding: 16px;
+            }
+
+            .noticesection-title {
+                font-size: 20px;
+            }
+
+            .noticesection-headline {
+                font-size: 16px;
+            }
+
+            .noticesection-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Custom scrollbar */
+        .noticesection::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .noticesection::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .noticesection::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .noticesection::-webkit-scrollbar-thumb:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Notice Section Container -->
+    <div class="noticesection" id="noticesection">
+        <!-- Header Section -->
+        <div class="noticesection-header">
+            <h1 class="noticesection-title">📢 নোটিশ বোর্ড</h1>
+            <p class="noticesection-subtitle">সর্বশেষ আপডেট ও গুরুত্বপূর্ণ তথ্য</p>
+        </div>
+
+        <!-- Notice Items Container -->
+        <div class="noticesection-container" id="noticesection-container">
+            <div class="loading">📡 নোটিশ লোড হচ্ছে...</div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function toDirectDriveUrl(url) {
+            try {
+                const fileMatch = url.match(/\/file\/d\/([^/]+)\//);
+                if (fileMatch && fileMatch[1]) {
+                    return `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`;
+                }
+                if (url.includes('drive.google.com/uc?export=download')) {
+                    return url;
+                }
+                return url;
+            } catch (error) {
+                console.error('Error converting Drive URL:', error);
+                return url;
+            }
+        }
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfzU7BDZGyRA8_7sdYkDe0C-ZcvDAtGuU",
+            authDomain: "college-dashboard-ahc.firebaseapp.com",
+            projectId: "college-dashboard-ahc",
+            storageBucket: "college-dashboard-ahc.firebasestorage.app",
+            messagingSenderId: "692197968743",
+            appId: "1:692197968743:web:ed9d77e7efed11ae1efdc2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load notices from Firebase
+        async function loadNotices() {
+            try {
+                const q = query(collection(db, "notices"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('noticesection-container');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            📭 এখনো কোন নোটিশ পাবলিশ করা হয়নি
+                        </div>
+                    `;
+                    return;
+                }
+
+                let noticesHTML = '';
+                let serialNumber = 1;
+
+                querySnapshot.forEach((doc) => {
+                    const notice = doc.data();
+                    const date = notice.createdAt ? new Date(notice.createdAt.seconds * 1000).toLocaleDateString('bn-BD') : 'তারিখ নেই';
+                    
+                    const downloadUrl = notice.downloadLink ? toDirectDriveUrl(notice.downloadLink) : null;
+                    
+                    noticesHTML += `
+                        <div class="noticesection-item">
+                            <div class="noticesection-serial">${serialNumber}</div>
+                            <h3 class="noticesection-headline">${notice.title}</h3>
+                            <p class="noticesection-description">${notice.description}</p>
+                            <div class="noticesection-footer">
+                                <span class="noticesection-date">📅 ${date}</span>
+                                ${downloadUrl ? `
+                                    <a href="${downloadUrl}" 
+                                       class="noticesection-download" 
+                                       target="_blank"
+                                       onclick="handleDownload(this)">
+                                        <svg class="noticesection-download-icon" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        ডাউনলোড
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    serialNumber++;
+                });
+
+                container.innerHTML = noticesHTML;
+            } catch (error) {
+                console.error("Error loading notices:", error);
+                document.getElementById('noticesection-container').innerHTML = `
+                    <div class="empty-state">
+                        ❌ নোটিশ লোড করতে সমস্যা হয়েছে
+                    </div>
+                `;
+            }
+        }
+
+        // Handle download button click
+        window.handleDownload = function(element) {
+            const noticeItem = element.closest('.noticesection-item');
+            const headline = noticeItem.querySelector('.noticesection-headline').textContent;
+            
+            // Add visual feedback
+            element.style.background = '#059669';
+            element.innerHTML = `
+                <svg class="noticesection-download-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                ডাউনলোড হচ্ছে...
+            `;
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                element.style.background = '';
+                element.innerHTML = `
+                    <svg class="noticesection-download-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    ডাউনলোড
+                `;
+            }, 2000);
+            
+            console.log(`Downloaded: ${headline} at ${new Date().toLocaleString('bn-BD')}`);
+        };
+
+        // Load notices when page loads
+        document.addEventListener('DOMContentLoaded', loadNotices);
+    </script>
+</body>
+</html>
