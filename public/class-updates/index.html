@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ক্লাস আপডেট সেকশন</title>
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --white: #ffffff;
+            --radius: 12px;
+            --primary-color: #2563eb;
+            --secondary-color: #f1f5f9;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Main update section container */
+        .updatesection {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        /* Animation for initial load */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header section */
+        .updatesection-header {
+            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            text-align: center;
+        }
+
+        .updatesection-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .updatesection-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Search section */
+        .updatesection-search {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .updatesection-search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--secondary-color);
+        }
+
+        .updatesection-search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Date buttons container */
+        .updatesection-dates {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .updatesection-date-btn {
+            background: var(--secondary-color);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .updatesection-date-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .updatesection-date-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Class details container */
+        .updatesection-details {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .updatesection-details.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Individual class item */
+        .updatesection-class {
+            background: var(--secondary-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .updatesection-class:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow);
+        }
+
+        .updatesection-class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .updatesection-class-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .updatesection-class-time {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .updatesection-class-info {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .updatesection-class-info strong {
+            color: var(--text-color);
+        }
+
+        .updatesection-important {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .updatesection-important-title {
+            color: #d97706;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        /* Loading and empty states */
+        .loading, .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+
+        /* No results message */
+        .updatesection-no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .updatesection {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .updatesection-header {
+                border-radius: 0;
+            }
+
+            .updatesection-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        .updatesection::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .updatesection::-webkit-scrollbar-track {
+            background: var(--secondary-color);
+        }
+
+        .updatesection::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .updatesection::-webkit-scrollbar-thumb:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main update section container -->
+    <div class="updatesection" id="updatesection">
+        <!-- Header section with title -->
+        <div class="updatesection-header">
+            <h1 class="updatesection-title">📚 ক্লাস আপডেট সেকশন</h1>
+            <p class="updatesection-subtitle">দৈনিক ক্লাসের সামারি ও গুরুত্বপূর্ণ তথ্য</p>
+        </div>
+
+        <!-- Search section -->
+        <div class="updatesection-search">
+            <input 
+                type="text" 
+                id="updatesection-search-input" 
+                class="updatesection-search-input" 
+                placeholder="তারিখ অনুসন্ধান করুন (যেমন: ১৩ আগস্ট)"
+            >
+        </div>
+
+        <!-- Date buttons container -->
+        <div class="updatesection-dates" id="updatesection-dates">
+            <div class="loading">📡 ক্লাস আপডেট লোড হচ্ছে...</div>
+        </div>
+
+        <!-- Class details container -->
+        <div class="updatesection-details" id="updatesection-details">
+            <!-- Class details will be displayed here -->
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function toDirectDriveUrl(url) {
+            try {
+                const fileMatch = url.match(/\/file\/d\/([^/]+)\//);
+                if (fileMatch && fileMatch[1]) {
+                    return `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`;
+                }
+                if (url.includes('drive.google.com/uc?export=download')) {
+                    return url;
+                }
+                return url;
+            } catch (error) {
+                console.error('Error converting Drive URL:', error);
+                return url;
+            }
+        }
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfzU7BDZGyRA8_7sdYkDe0C-ZcvDAtGuU",
+            authDomain: "college-dashboard-ahc.firebaseapp.com",
+            projectId: "college-dashboard-ahc",
+            storageBucket: "college-dashboard-ahc.firebasestorage.app",
+            messagingSenderId: "692197968743",
+            appId: "1:692197968743:web:ed9d77e7efed11ae1efdc2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let classUpdatesData = {};
+
+        // Load class updates from Firebase
+        async function loadClassUpdates() {
+            try {
+                const q = query(collection(db, "classUpdates"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('updatesection-dates');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            📭 এখনো কোন ক্লাস আপডেট পাবলিশ করা হয়নি
+                        </div>
+                    `;
+                    return;
+                }
+
+                classUpdatesData = {};
+                querySnapshot.forEach((doc) => {
+                    const update = doc.data();
+                    classUpdatesData[update.date] = update;
+                });
+
+                generateDateButtons();
+                setupSearchFunctionality();
+            } catch (error) {
+                console.error("Error loading class updates:", error);
+                document.getElementById('updatesection-dates').innerHTML = `
+                    <div class="empty-state">
+                        ❌ ক্লাস আপডেট লোড করতে সমস্যা হয়েছে
+                    </div>
+                `;
+            }
+        }
+
+        // Generate date buttons from the data
+        function generateDateButtons() {
+            const datesContainer = document.getElementById('updatesection-dates');
+            const dates = Object.keys(classUpdatesData);
+            
+            if (dates.length === 0) {
+                datesContainer.innerHTML = `
+                    <div class="empty-state">
+                        📭 এখনো কোন ক্লাস আপডেট পাবলিশ করা হয়নি
+                    </div>
+                `;
+                return;
+            }
+
+            let buttonsHTML = '';
+            dates.forEach(date => {
+                buttonsHTML += `
+                    <button class="updatesection-date-btn" onclick="showClassDetails('${date}', this)">
+                        📅 ${date}
+                    </button>
+                `;
+            });
+            
+            datesContainer.innerHTML = buttonsHTML;
+        }
+
+        // Setup search functionality for filtering dates
+        function setupSearchFunctionality() {
+            const searchInput = document.getElementById('updatesection-search-input');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                filterDateButtons(searchTerm);
+            });
+        }
+
+        // Filter date buttons based on search term
+        function filterDateButtons(searchTerm) {
+            const dateButtons = document.querySelectorAll('.updatesection-date-btn');
+            let hasVisibleButtons = false;
+            
+            dateButtons.forEach(button => {
+                const buttonText = button.textContent.toLowerCase();
+                const isVisible = buttonText.includes(searchTerm);
+                
+                button.style.display = isVisible ? 'block' : 'none';
+                if (isVisible) hasVisibleButtons = true;
+            });
+            
+            // Show no results message if no buttons are visible
+            showNoResultsMessage(!hasVisibleButtons && searchTerm !== '');
+        }
+
+        // Show or hide no results message
+        function showNoResultsMessage(show) {
+            let noResultsDiv = document.getElementById('updatesection-no-results');
+            
+            if (show && !noResultsDiv) {
+                noResultsDiv = document.createElement('div');
+                noResultsDiv.id = 'updatesection-no-results';
+                noResultsDiv.className = 'updatesection-no-results';
+                noResultsDiv.innerHTML = '🔍 কোন ফলাফল পাওয়া যায়নি';
+                document.getElementById('updatesection-dates').appendChild(noResultsDiv);
+            } else if (!show && noResultsDiv) {
+                noResultsDiv.remove();
+            }
+        }
+
+        // Show class details for a specific date
+        window.showClassDetails = function(date, clickedButton) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.updatesection-date-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            clickedButton.classList.add('active');
+            
+            // Get class data for the date
+            const classData = classUpdatesData[date];
+            
+            // Generate and display class details
+            const detailsContainer = document.getElementById('updatesection-details');
+            detailsContainer.innerHTML = generateClassDetailsHTML(date, classData);
+            detailsContainer.classList.add('show');
+            
+            // Scroll to details section smoothly
+            detailsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        // Generate HTML for class details
+        function generateClassDetailsHTML(date, classData) {
+            let html = `<h3 style="text-align: center; color: var(--primary-color); margin-bottom: 20px;">📚 ${date}</h3>`;
+            
+            if (classData.classes && classData.classes.length > 0) {
+                classData.classes.forEach(classItem => {
+                    html += `
+                        <div class="updatesection-class">
+                            <div class="updatesection-class-header">
+                                <span class="updatesection-class-title">${classItem.title || 'ক্লাস'}</span>
+                                <span class="updatesection-class-time">🕐 ${classItem.time || 'সময় নেই'}</span>
+                            </div>
+                            
+                            ${classItem.cancelled ? 
+                                '<div style="color: #dc2626; font-weight: bold; text-align: center; padding: 10px;">❌ ক্লাস হয়নি</div>' :
+                                `
+                                ${classItem.teacher ? `
+                                <div class="updatesection-class-info">
+                                    <strong>👨‍🏫 শিক্ষক:</strong> ${classItem.teacher}
+                                </div>
+                                ` : ''}
+                                
+                                ${classItem.subject ? `
+                                <div class="updatesection-class-info">
+                                    <strong>📘 বিষয়:</strong> ${classItem.subject}
+                                </div>
+                                ` : ''}
+                                
+                                ${classItem.chapter ? `
+                                <div class="updatesection-class-info">
+                                    <strong>📖 অধ্যায়:</strong> ${classItem.chapter}
+                                </div>
+                                ` : ''}
+                                
+                                ${classItem.topics && classItem.topics.length > 0 ? `
+                                <div class="updatesection-class-info">
+                                    <strong>📚 পাঠের বিষয়বস্তু:</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        ${classItem.topics.map(topic => `<li>${topic}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                ` : ''}
+                                
+                                ${classItem.important && classItem.important.length > 0 ? `
+                                <div class="updatesection-important">
+                                    <div class="updatesection-important-title">🛑 In course এর জন্য গুরুত্বপূর্ণ প্রশ্ন:</div>
+                                    <ul style="margin-left: 20px;">
+                                        ${classItem.important.map(item => `<li>${item}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                ` : ''}
+                                
+                                ${classItem.downloadLink ? `
+                                <div style="margin-top: 12px;">
+                                    <a href="${toDirectDriveUrl(classItem.downloadLink)}" 
+                                       target="_blank"
+                                       style="background: var(--primary-color); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem;">
+                                        📥 ক্লাস ম্যাটেরিয়াল ডাউনলোড
+                                    </a>
+                                </div>
+                                ` : ''}
+                                `
+                            }
+                        </div>
+                    `;
+                });
+            } else {
+                html += `
+                    <div class="empty-state">
+                        📭 এই তারিখের জন্য কোন ক্লাস তথ্য নেই
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        // Load class updates when page loads
+        document.addEventListener('DOMContentLoaded', loadClassUpdates);
+    </script>
+</body>
+</html>
