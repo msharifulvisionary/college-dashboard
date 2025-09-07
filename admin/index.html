@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন ড্যাশবোর্ড - College Dashboard</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f1f5f9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Form */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-form {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text);
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.show {
+            display: block;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: var(--text);
+            font-size: 28px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .items-list {
+            margin-top: 30px;
+        }
+
+        .item {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .item-title {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 18px;
+            flex: 1;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-description {
+            color: var(--text-light);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .item-meta {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid #fecaca;
+        }
+
+        .success {
+            background: #f0fdf4;
+            color: #16a34a;
+            padding: 12px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid #bbf7d0;
+        }
+
+        /* Class Updates Specific */
+        .class-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .add-class-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .topics-list {
+            margin-top: 10px;
+        }
+
+        .topic-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+
+        .topic-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .remove-topic {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .item-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginContainer" class="login-container">
+            <form class="login-form" id="loginForm">
+                <h2 class="login-title">🔐 অ্যাডমিন লগইন</h2>
+                <div id="loginError" class="error" style="display: none;"></div>
+                <div id="loginSuccess" class="success" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <!-- Changed from username to email for Firebase Auth -->
+                    <label class="form-label">ইমেইল</label>
+                    <input type="email" class="form-input" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">পাসওয়ার্ড</label>
+                    <div style="position: relative;">
+                        <input type="password" class="form-input" id="password" required>
+                        <button type="button" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">👁️</button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">লগইন করুন</button>
+                <!-- Added password reset button -->
+                <button type="button" class="btn" style="background: #6b7280; color: white; width: 100%; margin-top: 10px;" onclick="resetPassword()">পাসওয়ার্ড রিসেট করুন</button>
+            </form>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="dashboard">
+            <div class="header">
+                <h1>📊 অ্যাডমিন ড্যাশবোর্ড</h1>
+                <button class="btn btn-danger btn-sm" onclick="logout()">লগআউট</button>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('notices')">📢 নোটিশ</div>
+                <div class="tab" onclick="switchTab('notes')">📚 নোট</div>
+                <div class="tab" onclick="switchTab('classUpdates')">📅 ক্লাস আপডেট</div>
+            </div>
+
+            <!-- Notices Tab -->
+            <div id="notices-tab" class="tab-content active">
+                <h2>📢 নোটিশ ম্যানেজমেন্ট</h2>
+                <form id="noticeForm">
+                    <div class="form-group">
+                        <label class="form-label">নোটিশের শিরোনাম</label>
+                        <input type="text" class="form-input" id="noticeTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">বিবরণ</label>
+                        <textarea class="form-textarea" id="noticeDescription" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ডাউনলোড লিংক (ঐচ্ছিক)</label>
+                        <input type="url" class="form-input" id="noticeDownloadLink">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">নোটিশ যোগ করুন</button>
+                </form>
+
+                <div class="items-list">
+                    <h3>বিদ্যমান নোটিশসমূহ</h3>
+                    <div id="noticesList" class="loading">লোড হচ্ছে...</div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="notes-tab" class="tab-content">
+                <h2>📚 নোট ম্যানেজমেন্ট</h2>
+                <form id="noteForm">
+                    <div class="form-group">
+                        <label class="form-label">নোটের শিরোনাম</label>
+                        <input type="text" class="form-input" id="noteTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ডাউনলোড লিংক</label>
+                        <input type="url" class="form-input" id="noteDownloadLink" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">নোট যোগ করুন</button>
+                </form>
+
+                <div class="items-list">
+                    <h3>বিদ্যমান নোটসমূহ</h3>
+                    <div id="notesList" class="loading">লোড হচ্ছে...</div>
+                </div>
+            </div>
+
+            <!-- Class Updates Tab -->
+            <div id="classUpdates-tab" class="tab-content">
+                <h2>📅 ক্লাস আপডেট ম্যানেজমেন্ট</h2>
+                <form id="classUpdateForm">
+                    <div class="form-group">
+                        <label class="form-label">তারিখ</label>
+                        <input type="text" class="form-input" id="classDate" placeholder="যেমন: ১৩ আগস্ট ২০২৫ (বুধবার)" required>
+                    </div>
+                    
+                    <div id="classesContainer">
+                        <button type="button" class="add-class-btn" onclick="addClassField()">+ নতুন ক্লাস যোগ করুন</button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">ক্লাস আপডেট যোগ করুন</button>
+                </form>
+
+                <div class="items-list">
+                    <h3>বিদ্যমান ক্লাস আপডেটসমূহ</h3>
+                    <div id="classUpdatesList" class="loading">লোড হচ্ছে...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, orderBy, query, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfzU7BDZGyRA8_7sdYkDe0C-ZcvDAtGuU",
+            authDomain: "college-dashboard-ahc.firebaseapp.com",
+            projectId: "college-dashboard-ahc",
+            storageBucket: "college-dashboard-ahc.firebasestorage.app",
+            messagingSenderId: "692197968743",
+            appId: "1:692197968743:web:ed9d77e7efed11ae1efdc2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("[v0] User logged in:", user.uid);
+                // Check if user is admin
+                try {
+                    const adminDoc = await getDoc(doc(db, "_meta", "admins"));
+                    if (adminDoc.exists() && adminDoc.data()[user.uid] === true) {
+                        console.log("[v0] User is admin");
+                        showDashboard();
+                        loadAllData();
+                    } else {
+                        console.log("[v0] User is not admin");
+                        showError("আপনি অ্যাডমিন নন!");
+                        await signOut(auth);
+                    }
+                } catch (error) {
+                    console.log("[v0] Admin check error:", error);
+                    showError("অ্যাডমিন যাচাই করতে সমস্যা হয়েছে: " + error.message);
+                    await signOut(auth);
+                }
+            } else {
+                console.log("[v0] User not logged in");
+                showLogin();
+            }
+        });
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️';
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            console.log("[v0] Attempting login with email:", email);
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showLoginSuccess("সফলভাবে লগইন হয়েছে!");
+            } catch (error) {
+                console.log("[v0] Login error:", error);
+                let errorMessage = "লগইন করতে সমস্যা হয়েছে!";
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = "এই ইমেইল দিয়ে কোন ইউজার পাওয়া যায়নি!";
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = "ভুল পাসওয়ার্ড!";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "ভুল ইমেইল ফরম্যাট!";
+                }
+                
+                showError(errorMessage);
+            }
+        });
+
+        window.resetPassword = async function() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showError("পাসওয়ার্ড রিসেট করতে প্রথমে ইমেইল দিন!");
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showLoginSuccess("পাসওয়ার্ড রিসেট লিংক আপনার ইমেইলে পাঠানো হয়েছে!");
+            } catch (error) {
+                console.log("[v0] Password reset error:", error);
+                showError("পাসওয়ার্ড রিসেট করতে সমস্যা হয়েছে: " + error.message);
+            }
+        };
+
+        window.logout = async function() {
+            try {
+                await signOut(auth);
+                showLoginSuccess("সফলভাবে লগআউট হয়েছে!");
+            } catch (error) {
+                console.log("[v0] Logout error:", error);
+                showError("লগআউট করতে সমস্যা হয়েছে!");
+            }
+        };
+
+        // Show/hide functions
+        function showLogin() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('show');
+        }
+
+        function showDashboard() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboard').classList.add('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                
+                // Hide success message if showing
+                const successDiv = document.getElementById('loginSuccess');
+                if (successDiv) successDiv.style.display = 'none';
+                
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 10000);
+            }
+        }
+
+        function showLoginSuccess(message) {
+            const successDiv = document.getElementById('loginSuccess');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            // Hide error message if showing
+            document.getElementById('loginError').style.display = 'none';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Tab switching
+        window.switchTab = function(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        };
+
+        // Dashboard-specific error function
+        function showDashboardError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const activeTab = document.querySelector('.tab-content.active');
+            activeTab.insertBefore(errorDiv, activeTab.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        document.getElementById('noticeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('noticeTitle').value;
+            const description = document.getElementById('noticeDescription').value;
+            const downloadLink = document.getElementById('noticeDownloadLink').value;
+
+            console.log("[v0] Adding notice:", { title, description, downloadLink });
+
+            try {
+                const docRef = await addDoc(collection(db, "notices"), {
+                    title,
+                    description,
+                    downloadLink: downloadLink || null,
+                    createdAt: serverTimestamp()
+                });
+
+                console.log("[v0] Notice added successfully with ID:", docRef.id);
+                document.getElementById('noticeForm').reset();
+                showSuccess("নোটিশ সফলভাবে যোগ করা হয়েছে!");
+                loadNotices();
+            } catch (error) {
+                console.log("[v0] Notice add error:", error);
+                showDashboardError("নোটিশ যোগ করতে সমস্যা হয়েছে: " + error.message);
+            }
+        });
+
+        document.getElementById('noteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('noteTitle').value;
+            const downloadLink = document.getElementById('noteDownloadLink').value;
+
+            console.log("[v0] Adding note:", { title, downloadLink });
+
+            try {
+                const docRef = await addDoc(collection(db, "notes"), {
+                    title,
+                    downloadLink,
+                    createdAt: serverTimestamp()
+                });
+
+                console.log("[v0] Note added successfully with ID:", docRef.id);
+                document.getElementById('noteForm').reset();
+                showSuccess("নোট সফলভাবে যোগ করা হয়েছে!");
+                loadNotes();
+            } catch (error) {
+                console.log("[v0] Note add error:", error);
+                showDashboardError("নোট যোগ করতে সমস্যা হয়েছে: " + error.message);
+            }
+        });
+
+        document.getElementById('classUpdateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const date = document.getElementById('classDate').value;
+            const classes = [];
+
+            document.querySelectorAll('.class-item').forEach(classDiv => {
+                const title = classDiv.querySelector('.class-title').value;
+                const time = classDiv.querySelector('.class-time').value;
+                const teacher = classDiv.querySelector('.class-teacher').value;
+                const subject = classDiv.querySelector('.class-subject').value;
+                const chapter = classDiv.querySelector('.class-chapter').value;
+                const cancelled = classDiv.querySelector('.class-cancelled').checked;
+                
+                const topics = [];
+                classDiv.querySelectorAll('.topic-input').forEach(input => {
+                    if (input.value.trim()) {
+                        topics.push(input.value.trim());
+                    }
+                });
+
+                classes.push({
+                    title,
+                    time,
+                    teacher,
+                    subject,
+                    chapter,
+                    topics,
+                    cancelled
+                });
+            });
+
+            console.log("[v0] Adding class update:", { date, classes });
+
+            try {
+                const docRef = await addDoc(collection(db, "classUpdates"), {
+                    date,
+                    classes,
+                    createdAt: serverTimestamp()
+                });
+
+                console.log("[v0] Class update added successfully with ID:", docRef.id);
+                document.getElementById('classUpdateForm').reset();
+                document.getElementById('classesContainer').innerHTML = '<button type="button" class="add-class-btn" onclick="addClassField()">+ নতুন ক্লাস যোগ করুন</button>';
+                showSuccess("ক্লাস আপডেট সফলভাবে যোগ করা হয়েছে!");
+                loadClassUpdates();
+            } catch (error) {
+                console.log("[v0] Class update add error:", error);
+                showDashboardError("ক্লাস আপডেট যোগ করতে সমস্যা হয়েছে: " + error.message);
+            }
+        });
+
+        // Add class field function
+        window.addClassField = function() {
+            const container = document.getElementById('classesContainer');
+            const classDiv = document.createElement('div');
+            classDiv.className = 'class-item';
+            classDiv.innerHTML = `
+                <div class="class-header">
+                    <h4>ক্লাসের তথ্য</h4>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()">মুছুন</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">ক্লাসের নাম</label>
+                        <input type="text" class="form-input class-title" placeholder="যেমন: প্রথম ক্লাস (মেজর)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">সময়</label>
+                        <input type="text" class="form-input class-time" placeholder="যেমন: ১০:৩০ – ১১:১৫">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">শিক্ষক</label>
+                        <input type="text" class="form-input class-teacher" placeholder="যেমন: KD (Kartik Chandra Debnath)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">বিষয়</label>
+                        <input type="text" class="form-input class-subject" placeholder="যেমন: তাপ, তাপগতিবিদ্যা ও বিকিরণ তত্ত্ব">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">অধ্যায়</label>
+                    <input type="text" class="form-input class-chapter" placeholder="যেমন: ০১ - (তাপ ও তাপমাত্রা)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পাঠের বিষয়বস্তু</label>
+                    <div class="topics-list">
+                        <div class="topic-item">
+                            <input type="text" class="topic-input" placeholder="বিষয়বস্তু লিখুন">
+                            <button type="button" class="remove-topic" onclick="this.parentElement.remove()">মুছুন</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm" onclick="addTopicField(this)">+ বিষয়বস্তু যোগ করুন</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" class="class-cancelled"> ক্লাস হয়নি
+                    </label>
+                </div>
+            `;
+            container.insertBefore(classDiv, container.lastElementChild);
+        };
+
+        // Add topic field function
+        window.addTopicField = function(button) {
+            const topicsList = button.previousElementSibling;
+            const topicDiv = document.createElement('div');
+            topicDiv.className = 'topic-item';
+            topicDiv.innerHTML = `
+                <input type="text" class="topic-input" placeholder="বিষয়বস্তু লিখুন">
+                <button type="button" class="remove-topic" onclick="this.parentElement.remove()">মুছুন</button>
+            `;
+            topicsList.appendChild(topicDiv);
+        };
+
+        async function loadNotices() {
+            try {
+                const q = query(collection(db, "notices"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('noticesList');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div class="loading">কোন নোটিশ নেই</div>';
+                    return;
+                }
+
+                let html = '';
+                querySnapshot.forEach((doc) => {
+                    const notice = doc.data();
+                    const date = notice.createdAt ? new Date(notice.createdAt.seconds * 1000).toLocaleDateString('bn-BD') : 'তারিখ নেই';
+                    
+                    html += `
+                        <div class="item">
+                            <div class="item-header">
+                                <div class="item-title">${notice.title}</div>
+                                <div class="item-actions">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteItem('notices', '${doc.id}')">মুছুন</button>
+                                </div>
+                            </div>
+                            <div class="item-description">${notice.description}</div>
+                            <div class="item-meta">
+                                তারিখ: ${date} ${notice.downloadLink ? `| ডাউনলোড লিংক: ${notice.downloadLink}` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.log("[v0] Load notices error:", error);
+                document.getElementById('noticesList').innerHTML = '<div class="loading">লোড করতে সমস্যা হয়েছে</div>';
+            }
+        }
+
+        async function loadNotes() {
+            try {
+                const q = query(collection(db, "notes"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('notesList');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div class="loading">কোন নোট নেই</div>';
+                    return;
+                }
+
+                let html = '';
+                querySnapshot.forEach((doc) => {
+                    const note = doc.data();
+                    const date = note.createdAt ? new Date(note.createdAt.seconds * 1000).toLocaleDateString('bn-BD') : 'তারিখ নেই';
+                    
+                    html += `
+                        <div class="item">
+                            <div class="item-header">
+                                <div class="item-title">${note.title}</div>
+                                <div class="item-actions">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteItem('notes', '${doc.id}')">মুছুন</button>
+                                </div>
+                            </div>
+                            <div class="item-meta">
+                                তারিখ: ${date} | ডাউনলোড লিংক: ${note.downloadLink}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.log("[v0] Load notes error:", error);
+                document.getElementById('notesList').innerHTML = '<div class="loading">লোড করতে সমস্যা হয়েছে</div>';
+            }
+        }
+
+        async function loadClassUpdates() {
+            try {
+                const q = query(collection(db, "classUpdates"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('classUpdatesList');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div class="loading">কোন ক্লাস আপডেট নেই</div>';
+                    return;
+                }
+
+                let html = '';
+                querySnapshot.forEach((doc) => {
+                    const update = doc.data();
+                    
+                    html += `
+                        <div class="item">
+                            <div class="item-header">
+                                <div class="item-title">${update.date}</div>
+                                <div class="item-actions">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteItem('classUpdates', '${doc.id}')">মুছুন</button>
+                                </div>
+                            </div>
+                            <div class="item-description">
+                                ${update.classes.length} টি ক্লাস রেকর্ড করা হয়েছে
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.log("[v0] Load class updates error:", error);
+                document.getElementById('classUpdatesList').innerHTML = '<div class="loading">লোড করতে সমস্যা হয়েছে</div>';
+            }
+        }
+
+        window.deleteItem = async function(collection_name, docId) {
+            if (confirm('আপনি কি নিশ্চিত যে এটি মুছে দিতে চান?')) {
+                try {
+                    await deleteDoc(doc(db, collection_name, docId));
+                    showSuccess('সফলভাবে মুছে দেওয়া হয়েছে!');
+                    
+                    // Reload the appropriate list
+                    if (collection_name === 'notices') loadNotices();
+                    else if (collection_name === 'notes') loadNotes();
+                    else if (collection_name === 'classUpdates') loadClassUpdates();
+                } catch (error) {
+                    console.log("[v0] Delete error:", error);
+                    showError('মুছতে সমস্যা হয়েছে: ' + error.message);
+                }
+            }
+        };
+
+        // Load all data
+        function loadAllData() {
+            loadNotices();
+            loadNotes();
+            loadClassUpdates();
+        }
+
+        // Success message function
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            
+            const activeTab = document.querySelector('.tab-content.active');
+            activeTab.insertBefore(successDiv, activeTab.firstChild);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
