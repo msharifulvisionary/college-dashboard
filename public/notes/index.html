@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নোট সেকশন - Note Section</title>
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --white: #ffffff;
+            --radius: 12px;
+            --primary-color: #3b82f6;
+            --secondary-color: #64748b;
+            --accent-color: #10b981;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Global styles and font setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Main note section container */
+        .notesection {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            padding: 0;
+        }
+
+        /* Hover effect for the main container */
+        .notesection:hover {
+            transform: translateY(0);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Header section styling */
+        .notesection-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            text-align: center;
+        }
+
+        .notesection-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .notesection-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Content area styling */
+        .notesection-content {
+            padding: 20px;
+        }
+
+        /* Individual note item styling */
+        .notesection-item {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hover effect for note items */
+        .notesection-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-color);
+        }
+
+        /* Serial number styling */
+        .notesection-serial {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--primary-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Note headline styling */
+        .notesection-headline {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            padding-right: 25px;
+            line-height: 1.4;
+        }
+
+        /* Date styling */
+        .notesection-date {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Date icon */
+        .notesection-date::before {
+            content: "📅";
+            font-size: 0.9rem;
+        }
+
+        /* Download button styling */
+        .notesection-download {
+            background: linear-gradient(135deg, var(--accent-color), #059669);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Download button hover effect */
+        .notesection-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #059669, var(--accent-color));
+        }
+
+        /* Download button active state */
+        .notesection-download:active {
+            transform: translateY(0);
+        }
+
+        /* Download icon */
+        .notesection-download::before {
+            content: "⬇️";
+            font-size: 1rem;
+        }
+
+        /* Loading and empty states */
+        .loading, .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .notesection {
+                width: 100%;
+                max-width: none;
+                margin: 10px;
+            }
+            
+            .notesection-headline {
+                font-size: 1rem;
+            }
+            
+            .notesection-content {
+                padding: 15px;
+            }
+        }
+
+        /* Scrollbar styling */
+        .notesection::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notesection::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .notesection::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .notesection::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main note section container -->
+    <div class="notesection" id="notesection">
+        <!-- Header section -->
+        <div class="notesection-header">
+            <h1 class="notesection-title">📚 নোট সেকশন</h1>
+            <p class="notesection-subtitle">আপনার গুরুত্বপূর্ণ নোটসমূহ</p>
+        </div>
+
+        <!-- Content area -->
+        <div class="notesection-content" id="notesection-content">
+            <div class="loading">📡 নোট লোড হচ্ছে...</div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function toDirectDriveUrl(url) {
+            try {
+                const fileMatch = url.match(/\/file\/d\/([^/]+)\//);
+                if (fileMatch && fileMatch[1]) {
+                    return `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`;
+                }
+                if (url.includes('drive.google.com/uc?export=download')) {
+                    return url;
+                }
+                return url;
+            } catch (error) {
+                console.error('Error converting Drive URL:', error);
+                return url;
+            }
+        }
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfzU7BDZGyRA8_7sdYkDe0C-ZcvDAtGuU",
+            authDomain: "college-dashboard-ahc.firebaseapp.com",
+            projectId: "college-dashboard-ahc",
+            storageBucket: "college-dashboard-ahc.firebasestorage.app",
+            messagingSenderId: "692197968743",
+            appId: "1:692197968743:web:ed9d77e7efed11ae1efdc2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load notes from Firebase
+        async function loadNotes() {
+            try {
+                const q = query(collection(db, "notes"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('notesection-content');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            এখনো কোন নোট পাবলিশ করা হয়নি
+                        </div>
+                    `;
+                    return;
+                }
+
+                let notesHTML = '';
+                let serialNumber = 1;
+
+                querySnapshot.forEach((doc) => {
+                    const note = doc.data();
+                    const date = note.createdAt ? new Date(note.createdAt.seconds * 1000).toLocaleDateString('bn-BD') : 'তারিখ নেই';
+                    
+                    const downloadUrl = note.downloadLink ? toDirectDriveUrl(note.downloadLink) : null;
+                    
+                    notesHTML += `
+                        <div class="notesection-item">
+                            <div class="notesection-serial">${serialNumber}</div>
+                            <h3 class="notesection-headline">📌 ${note.title}</h3>
+                            <div class="notesection-date">${date}</div>
+                            ${downloadUrl ? `
+                                <a href="${downloadUrl}" 
+                                   class="notesection-download" 
+                                   target="_blank"
+                                   onclick="handleDownload(this)">
+                                   ডাউনলোড করুন
+                                </a>
+                            ` : `
+                                <button class="notesection-download" onclick="alert('ডাউনলোড লিংক এখনো যোগ করা হয়নি!')">
+                                   ডাউনলোড করুন
+                                </button>
+                            `}
+                        </div>
+                    `;
+                    serialNumber++;
+                });
+
+                container.innerHTML = notesHTML;
+            } catch (error) {
+                console.error("Error loading notes:", error);
+                document.getElementById('notesection-content').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        নোট লোড করতে সমস্যা হয়েছে
+                    </div>
+                `;
+            }
+        }
+
+        // Handle download button click
+        window.handleDownload = function(element) {
+            // Add visual feedback
+            element.style.transform = 'scale(0.95)';
+            element.innerHTML = '⏳ ডাউনলোড হচ্ছে...';
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                element.style.transform = '';
+                element.innerHTML = '⬇️ ডাউনলোড করুন';
+            }, 2000);
+        };
+
+        // Load notes when page loads
+        document.addEventListener('DOMContentLoaded', loadNotes);
+    </script>
+</body>
+</html>
