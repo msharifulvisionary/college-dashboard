@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আপনার একাডেমিক রেজাল্ট</title>
+    <!-- ফন্ট অ্যাওয়সম CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --white: #ffffff;
+            --radius: 10px;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --text-color: #1f2937;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+            padding: 20px;
+        }
+        
+        /* রেজাল্ট সেকশন স্টাইলিং */
+        #resultsection {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        /* কন্টেন্ট কন্টেইনার */
+        .resultsection-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* আইকন স্টাইল */
+        .resultsection-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* টাইটেল স্টাইল */
+        .resultsection-title {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        /* বাটন স্টাইল */
+        .resultsection-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .resultsection-button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        
+        /* রেসপনসিভ ডিজাইন */
+        @media (max-width: 768px) {
+            #resultsection {
+                padding: 20px;
+            }
+            
+            .resultsection-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- রেজাল্ট সেকশন -->
+    
+        <div class="resultsection-content" id="resultsection">
+            <!-- আইকন -->
+            <i class="resultsection-icon fas fa-graduation-cap"></i>
+            
+            <!-- টাইটেল -->
+            <h2 class="resultsection-title">আপনার একাডেমিক রেজাল্ট দেখুন</h2>
+            
+            <!-- বাটন -->
+            <a href="http://results.nu.ac.bd/" target="_blank" class="resultsection-button">
+                রেজাল্ট দেখতে এইখানে ক্লিক করুন
+            </a>
+        </div>
+  
+
+    <script>
+        // রেজাল্ট সেকশন সম্পর্কিত JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // রেজাল্ট সেকশন এলিমেন্ট সিলেক্ট করা
+            const resultsection = document.getElementById('resultsection');
+            
+            // পেজ লোড হওয়ার পর অ্যানিমেশনের জন্য ক্লাস যোগ
+            setTimeout(() => {
+                resultsection.style.transform = 'translateY(0)';
+                resultsection.style.opacity = '1';
+            }, 100);
+            
+            // রেজাল্ট বাটন ক্লিক ইভেন্ট
+            const resultButton = document.querySelector('.resultsection-button');
+            if (resultButton) {
+                resultButton.addEventListener('click', function() {
+                    // অপশনাল: ক্লিক ট্র্যাকিং বা অন্যান্য একশন
+                    console.log('রেজাল্ট দেখতে ক্লিক করা হয়েছে');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
