@@ -1,150 +1,174 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ট্রেন তথ্য সেকশন</title>
-  <style>
-    :root {
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    /* Train Section Styling */
-    .train {
-      width: 100%;
-      max-width: 900px;
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      color: #fff;
-      padding: 12px 0;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-
-    /* Track */
-    .train-track {
-      display: inline-block;
-      white-space: nowrap;
-      padding-left: 100%;
-      animation: train-move 9s linear infinite;
-    }
-
-    /* Each Text Block */
-    .train-text {
-      display: inline-block;
-      margin-right: 50px;
-      font-size: 16px;
-      font-weight: 500;
-      text-decoration: none;
-      color: #fff;
-      padding: 6px 20px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.15);
-      transition: color 0.3s ease, background 0.3s ease;
-    }
-
-    .train-text:hover {
-      color: #ffeb3b;
-      background: rgba(0,0,0,0.35);
-      text-shadow: 0 0 8px rgba(255,255,255,0.8);
-    }
-
-    /* Animation */
-    @keyframes train-move {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      .train-text {
-        font-size: 14px;
-        margin-right: 30px;
-        padding: 4px 12px;
-      }
-    }
-
-    /* Loading / Empty State */
-    .loading, .empty-state {
-      font-size: 14px;
-      color: #fff;
-      opacity: 0.9;
-      padding: 6px 20px;
-    }
-  </style>
-</head>
-<body>
-  
-  <!-- Train Section -->
-  <section class="train" id="train-section">
-    <div class="train-track" id="train-track">
-      <div class="loading">🚂 ট্রেন তথ্য লোড হচ্ছে...</div>
-    </div>
-  </section>
-
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCfzU7BDZGyRA8_7sdYkDe0C-ZcvDAtGuU",
-      authDomain: "college-dashboard-ahc.firebaseapp.com",
-      projectId: "college-dashboard-ahc",
-      storageBucket: "college-dashboard-ahc.firebasestorage.app",
-      messagingSenderId: "692197968743",
-      appId: "1:692197968743:web:ed9d77e7efed11ae1efdc2"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Load Train Data
-    async function loadTrain() {
-      try {
-        const q = query(collection(db, "train"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-
-        const track = document.getElementById("train-track");
-
-        if (querySnapshot.empty) {
-          track.innerHTML = `<div class="empty-state">🚭 এখনো কোন ট্রেন তথ্য নেই</div>`;
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ট্রেন সেকশন</title>
+    <style>
+        /* Train Section Styling */
+        .train {
+            width: 100%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            padding: 12px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
         }
 
-        let html = "";
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const url = data.link ? data.link : "#";
-          html += `
-            <a href="${url}" target="_blank" class="train-text">
-              🚆 ${data.title}
-            </a>
-          `;
-        });
+        /* Track */
+        .train-track {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: train-move 9s linear infinite;
+        }
 
-        track.innerHTML = html;
-      } catch (error) {
-        console.error("Error loading train info:", error);
-        document.getElementById("train-track").innerHTML = `
-          <div class="empty-state">❌ ট্রেন তথ্য লোড করতে সমস্যা হয়েছে</div>
-        `;
-      }
-    }
+        /* Each Text Block */
+        .train-text {
+            display: inline-block;
+            margin-right: 50px;
+            font-size: 18px;
+            font-weight: 500;
+            text-decoration: none;
+            color: #fff;
+            padding: 0 20px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            transition: color 0.3s ease, background 0.3s ease;
+        }
 
-    document.addEventListener("DOMContentLoaded", loadTrain);
-  </script>
+        .train-text:hover {
+            color: #ffeb3b;
+            background: rgba(0,0,0,0.3);
+            text-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        /* Animation */
+        @keyframes train-move {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        /* Global styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Train Section -->
+    <section class="train">
+        <div class="train-track" id="train-track">
+            <div class="loading">📡 ট্রেন তথ্য লোড হচ্ছে...</div>
+        </div>
+    </section>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function toDirectDriveUrl(url) {
+            try {
+                const fileMatch = url.match(/\/file\/d\/([^/]+)\//);
+                if (fileMatch && fileMatch[1]) {
+                    return `https://drive.google.com/uc?export=download&id=${fileMatch[1]}`;
+                }
+                if (url.includes('drive.google.com/uc?export=download')) {
+                    return url;
+                }
+                return url;
+            } catch (error) {
+                console.error('Error converting Drive URL:', error);
+                return url;
+            }
+        }
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCfzU7BDZGyRA8_7sdYkDe0C-ZcvDAtGuU",
+            authDomain: "college-dashboard-ahc.firebaseapp.com",
+            projectId: "college-dashboard-ahc",
+            storageBucket: "college-dashboard-ahc.firebasestorage.app",
+            messagingSenderId: "692197968743",
+            appId: "1:692197968743:web:ed9d77e7efed11ae1efdc2"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Load train data from Firebase
+        async function loadTrainData() {
+            try {
+                const q = query(collection(db, "trains"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const trackContainer = document.getElementById('train-track');
+                
+                if (querySnapshot.empty) {
+                    trackContainer.innerHTML = `
+                        <div class="loading">📭 এখনো কোন ট্রেন তথ্য পাবলিশ করা হয়নি</div>
+                    `;
+                    return;
+                }
+
+                let trainHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const train = doc.data();
+                    const link = train.link ? toDirectDriveUrl(train.link) : '#';
+                    const title = train.title || 'শিরোনাম নেই';
+                    const description = train.description || '';
+                    
+                    const fullText = description ? `${title} - ${description}` : title;
+                    
+                    trainHTML += `
+                        <a href="${link}" target="_blank" class="train-text" onclick="handleTrainClick(this)">
+                            📝 ${fullText}
+                        </a>
+                    `;
+                });
+
+                trackContainer.innerHTML = trainHTML;
+            } catch (error) {
+                console.error("Error loading train data:", error);
+                document.getElementById('train-track').innerHTML = `
+                    <div class="loading">❌ ট্রেন তথ্য লোড করতে সমস্যা হয়েছে</div>
+                `;
+            }
+        }
+
+        // Handle train text click
+        window.handleTrainClick = function(element) {
+            const originalText = element.textContent;
+            
+            // Add visual feedback
+            element.style.background = 'rgba(255,235,59,0.3)';
+            element.style.color = '#ffeb3b';
+            
+            // Reset after 1 second
+            setTimeout(() => {
+                element.style.background = 'rgba(255,255,255,0.1)';
+                element.style.color = '#fff';
+            }, 1000);
+            
+            console.log(`Clicked: ${originalText} at ${new Date().toLocaleString('bn-BD')}`);
+        };
+
+        // Load train data when page loads
+        document.addEventListener('DOMContentLoaded', loadTrainData);
+    </script>
 </body>
 </html>
