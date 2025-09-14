@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>কর্মচারী তালিকা</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS ভেরিয়েবল ডিফাইন */
+        :root {
+            --white: #ffffff;
+            --radius: 16px;
+            --primary-color: #4a6cf7;
+            --secondary-color: #6c757d;
+            --text-color: #333333;
+            --light-bg: #f8f9fa;
+            --card-hover: #f1f5ff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --gradient-start: #6a11cb;
+            --gradient-end: #2575fc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* মূল সেকশন স্টাইল */
+        #employeesection {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 95%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        #employeesection:hover {
+            box-shadow: var(--hover-shadow);
+        }
+
+        /* হেডিং স্টাইল */
+        .employeesection-heading {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-bg);
+            font-size: 1.8rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .employeesection-heading::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border-radius: 3px;
+        }
+
+        /* কর্মচারী কার্ড কন্টেইনার */
+        .employeesection-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* প্রতিটি কর্মচারী কার্ড */
+        .employeesection-card {
+            display: flex;
+            align-items: center;
+            background: var(--light-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .employeesection-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-5px);
+        }
+
+        .employeesection-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gradient-start), var(--gradient-end));
+        }
+
+        /* প্রোফাইল ছবির কন্টেইনার */
+        .employeesection-image-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        /* প্রোফাইল ছবি */
+        .employeesection-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--white);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .employeesection-card:hover .employeesection-image {
+            transform: scale(1.1);
+            border-color: var(--primary-color);
+        }
+
+        /* কর্মচারীর তথ্য */
+        .employeesection-info {
+            flex-grow: 1;
+        }
+
+        .employeesection-name {
+            margin: 0;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        /* ফোন আইকন বাটন */
+        .employeesection-phone-btn {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
+        }
+
+        .employeesection-phone-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
+        }
+
+        /* নম্বর ডিসপ্লে স্টাইল */
+        .employeesection-number-display {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 0 0 var(--radius) var(--radius);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .employeesection-card.active {
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        .employeesection-card.active .employeesection-number-display {
+            opacity: 1;
+            top: calc(100% - 40px);
+        }
+
+        /* কপি বাটন */
+        .employeesection-copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .employeesection-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* কপি নোটিফিকেশন */
+        .employeesection-copy-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4caf50;
+            color: white;
+            padding: 12px 25px;
+            border-radius: var(--radius);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .employeesection-copy-notification.show {
+            opacity: 1;
+        }
+
+        /* রেসপনসিভ ডিজাইন */
+        @media (max-width: 480px) {
+            .employeesection-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 25px 20px;
+            }
+            
+            .employeesection-image-container {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .employeesection-info {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- কর্মচারী তালিকা সেকশন -->
+    <section id="employeesection">
+        <h2 class="employeesection-heading">কর্মচারী তালিকা</h2>
+        
+        <div class="employeesection-container">
+            <!-- কর্মচারী ১: মান্নান -->
+            <div class="employeesection-card">
+                <div class="employeesection-image-container">
+                    <img src="https://placeholder.pics/svg/150/4A6CF7-4A6CF7/FFFFFF-FFFFFF/মান্নান" alt="মান্নান" class="employeesection-image">
+                </div>
+                <div class="employeesection-info">
+                    <h3 class="employeesection-name">মান্নান</h3>
+                </div>
+                <button class="employeesection-phone-btn" data-number="০১৭৮৮-৯৭৭৯০৭">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <div class="employeesection-number-display">
+                    <span>০১৭৮৮-৯৭৭৯০৭</span>
+                    <button class="employeesection-copy-btn" data-number="০১৭৮৮-৯৭৭৯০৭">
+                        <i class="fas fa-copy"></i> কপি
+                    </button>
+                </div>
+            </div>
+            
+            <!-- কর্মচারী ২: সাজু -->
+            <div class="employeesection-card">
+                <div class="employeesection-image-container">
+                    <img src="https://placeholder.pics/svg/150/4A6CF7-4A6CF7/FFFFFF-FFFFFF/সাজু" alt="সাজু" class="employeesection-image">
+                </div>
+                <div class="employeesection-info">
+                    <h3 class="employeesection-name">সাজু</h3>
+                </div>
+                <button class="employeesection-phone-btn" data-number="০১৭২৪-১০৭৩৪৫">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <div class="employeesection-number-display">
+                    <span>০১৭২৪-১০৭৩৪৫</span>
+                    <button class="employeesection-copy-btn" data-number="০১৭২৪-১০৭৩৪৫">
+                        <i class="fas fa-copy"></i> কপি
+                    </button>
+                </div>
+            </div>
+            
+            <!-- কর্মচারী ৩: জহরুল -->
+            <div class="employeesection-card">
+                <div class="employeesection-image-container">
+                    <img src="https://placeholder.pics/svg/150/4A6CF7-4A6CF7/FFFFFF-FFFFFF/জহরুল" alt="জহরুল" class="employeesection-image">
+                </div>
+                <div class="employeesection-info">
+                    <h3 class="employeesection-name">জহরুল</h3>
+                </div>
+                <button class="employeesection-phone-btn" data-number="০১৮৬৮-৫৭৭০৮২">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <div class="employeesection-number-display">
+                    <span>০১৮৬৮-৫৭৭০৮২</span>
+                    <button class="employeesection-copy-btn" data-number="০১৮৬৮-৫৭৭০৮২">
+                        <i class="fas fa-copy"></i> কপি
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- কপি নোটিফিকেশন -->
+        <div class="employeesection-copy-notification" id="copyNotification">
+            <i class="fas fa-check-circle"></i> নাম্বার কপি করা হয়েছে!
+        </div>
+    </section>
+
+    <script>
+        // DOM লোড হওয়ার পর স্ক্রিপ্ট এক্সিকিউট হবে
+        document.addEventListener('DOMContentLoaded', function() {
+            // ফোন বাটন সিলেক্ট করা
+            const phoneButtons = document.querySelectorAll('.employeesection-phone-btn');
+            const copyButtons = document.querySelectorAll('.employeesection-copy-btn');
+            const notification = document.getElementById('copyNotification');
+            let activeCard = null;
+            
+            // ফোন বাটনে ক্লিক করলে নম্বর দেখানো
+            phoneButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.employeesection-card');
+                    
+                    // যদি অন্য কার্ড একটিভ থাকে, তা বন্ধ করা
+                    if (activeCard && activeCard !== card) {
+                        activeCard.classList.remove('active');
+                    }
+                    
+                    // বর্তমান কার্ড টগল করা
+                    card.classList.toggle('active');
+                    activeCard = card.classList.contains('active') ? card : null;
+                });
+            });
+            
+            // কপি বাটনে ক্লিক করলে নাম্বার কপি করা
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // ইভেন্ট বাবbling থামানো
+                    const phoneNumber = this.getAttribute('data-number');
+                    
+                    // ক্লিপবোর্ডে নাম্বার কপি করা
+                    copyToClipboard(phoneNumber);
+                    
+                    // নোটিফিকেশন দেখানো
+                    showNotification();
+                    
+                    // 2 সেকেন্ড পর নম্বর ডিসপ্লে বন্ধ করা
+                    setTimeout(() => {
+                        if (activeCard) {
+                            activeCard.classList.remove('active');
+                            activeCard = null;
+                        }
+                    }, 2000);
+                });
+            });
+            
+            // বাইরে ক্লিক করলে নম্বর ডিসপ্লে বন্ধ করা
+            document.addEventListener('click', function(e) {
+                if (activeCard && !activeCard.contains(e.target)) {
+                    activeCard.classList.remove('active');
+                    activeCard = null;
+                }
+            });
+            
+            // ক্লিপবোর্ডে কপি করার ফাংশন
+            function copyToClipboard(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+            
+            // নোটিফিকেশন দেখানোর ফাংশন
+            function showNotification() {
+                notification.classList.add('show');
+                
+                // ৩ সেকেন্ড পর নোটিফিকেশন隐藏 করা
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
