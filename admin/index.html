@@ -539,8 +539,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">গুগল ড্রাইভ লিংক</label>
-                        <input type="url" class="form-input" id="trainLink" placeholder="https://drive.google.com/file/d/..." required>
+                        <label class="form-label">গুগল ড্রাইভ লিংক (ঐচ্ছিক)</label>
+                        <input type="url" class="form-input" id="trainLink" placeholder="https://drive.google.com/file/d/... (ঐচ্ছিক)">
                     </div>
                     
                     <button type="submit" class="btn btn-primary">ট্রেন আইটেম যোগ করুন</button>
@@ -1049,7 +1049,7 @@
             try {
                 const docRef = await addDoc(collection(db, "trains"), {
                     text,
-                    link,
+                    link: link || null,
                     createdAt: serverTimestamp()
                 });
 
@@ -1095,7 +1095,7 @@
                             </div>
                             <div class="item-description">${train.text}</div>
                             <div class="item-meta">
-                                তারিখ: ${date} | লিংক: <a href="${train.link}" target="_blank" style="color: var(--primary);">${train.link}</a>
+                                তারিখ: ${date} | লিংক: ${train.link ? `<a href="${train.link}" target="_blank" style="color: var(--primary);">${train.link}</a>` : ''}
                             </div>
                         </div>
                     `;
