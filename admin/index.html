@@ -327,6 +327,61 @@
             font-size: 12px;
         }
 
+        /* Train Section Specific */
+        .train-item {
+            background: #ecf8ff;
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .train-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .add-train-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .train-list {
+            margin-top: 10px;
+        }
+
+        .train-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+            align-items: center;
+        }
+
+        .train-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .remove-train {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -394,6 +449,7 @@
                 <div class="tab active" onclick="switchTab('notices')">📢 নোটিশ</div>
                 <div class="tab" onclick="switchTab('notes')">📚 নোট</div>
                 <div class="tab" onclick="switchTab('classUpdates')">📅 ক্লাস আপডেট</div>
+                <div class="tab" onclick="switchTab('trains')">🚂 ট্রেন সেকশন</div>
             </div>
 
             <!-- Notices Tab -->
@@ -466,6 +522,33 @@
                 <div class="items-list">
                     <h3>বিদ্যমান ক্লাস আপডেটসমূহ</h3>
                     <div id="classUpdatesList" class="loading">লোড হচ্ছে...</div>
+                </div>
+            </div>
+
+            <!-- Train Section Tab -->
+            <div id="trains-tab" class="tab-content">
+                <h2>🚂 ট্রেন সেকশন ম্যানেজমেন্ট</h2>
+                <div class="success" style="background: #f0f9ff; color: #0369a1; border-color: #bae6fd;">
+                    <strong>মোট ট্রেন আইটেম:</strong> <span id="trainCount">0</span>টি
+                </div>
+                
+                <form id="trainForm">
+                    <div class="form-group">
+                        <label class="form-label">ট্রেন টেক্সট</label>
+                        <textarea class="form-textarea" id="trainText" placeholder="যেমন: 📝 অফ নোটিশ: ২০২৪ সালের অনার্স ১ম বর্ষ পরীক্ষা গ্রহণের সুবিধার্থে..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">গুগল ড্রাইভ লিংক</label>
+                        <input type="url" class="form-input" id="trainLink" placeholder="https://drive.google.com/file/d/..." required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">ট্রেন আইটেম যোগ করুন</button>
+                </form>
+
+                <div class="items-list">
+                    <h3>বিদ্যমান ট্রেন আইটেমসমূহ</h3>
+                    <div id="trainsList" class="loading">লোড হচ্ছে...</div>
                 </div>
             </div>
         </div>
@@ -582,46 +665,6 @@
                 showError("লগআউট করতে সমস্যা হয়েছে!");
             }
         };
-
-        // Show/hide functions
-        function showLogin() {
-            document.getElementById('loginContainer').style.display = 'flex';
-            document.getElementById('dashboard').classList.remove('show');
-        }
-
-        function showDashboard() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('dashboard').classList.add('show');
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('loginError');
-            if (errorDiv) {
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
-                
-                // Hide success message if showing
-                const successDiv = document.getElementById('loginSuccess');
-                if (successDiv) successDiv.style.display = 'none';
-                
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 10000);
-            }
-        }
-
-        function showLoginSuccess(message) {
-            const successDiv = document.getElementById('loginSuccess');
-            successDiv.textContent = message;
-            successDiv.style.display = 'block';
-            
-            // Hide error message if showing
-            document.getElementById('loginError').style.display = 'none';
-            
-            setTimeout(() => {
-                successDiv.style.display = 'none';
-            }, 5000);
-        }
 
         // Tab switching
         window.switchTab = function(tabName) {
@@ -944,6 +987,7 @@
                     if (collection_name === 'notices') loadNotices();
                     else if (collection_name === 'notes') loadNotes();
                     else if (collection_name === 'classUpdates') loadClassUpdates();
+                    else if (collection_name === 'trains') loadTrains();
                 } catch (error) {
                     console.log("[v0] Delete error:", error);
                     showError('মুছতে সমস্যা হয়েছে: ' + error.message);
@@ -956,6 +1000,7 @@
             loadNotices();
             loadNotes();
             loadClassUpdates();
+            loadTrains();
         }
 
         // Success message function
@@ -970,6 +1015,79 @@
             setTimeout(() => {
                 successDiv.remove();
             }, 3000);
+        }
+
+        // Train form submission handler
+        document.getElementById('trainForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const text = document.getElementById('trainText').value;
+            const link = document.getElementById('trainLink').value;
+
+            console.log("[v0] Adding train item:", { text, link });
+
+            try {
+                const docRef = await addDoc(collection(db, "trains"), {
+                    text,
+                    link,
+                    createdAt: serverTimestamp()
+                });
+
+                console.log("[v0] Train item added successfully with ID:", docRef.id);
+                document.getElementById('trainForm').reset();
+                showSuccess("ট্রেন আইটেম সফলভাবে যোগ করা হয়েছে!");
+                loadTrains();
+            } catch (error) {
+                console.log("[v0] Train add error:", error);
+                showDashboardError("ট্রেন আইটেম যোগ করতে সমস্যা হয়েছে: " + error.message);
+            }
+        });
+
+        // Train loading function
+        async function loadTrains() {
+            try {
+                const q = query(collection(db, "trains"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                const container = document.getElementById('trainsList');
+                const countElement = document.getElementById('trainCount');
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div class="loading">কোন ট্রেন আইটেম নেই</div>';
+                    countElement.textContent = '0';
+                    return;
+                }
+
+                let html = '';
+                let count = 0;
+                querySnapshot.forEach((doc) => {
+                    const train = doc.data();
+                    const date = train.createdAt ? new Date(train.createdAt.seconds * 1000).toLocaleDateString('bn-BD') : 'তারিখ নেই';
+                    count++;
+                    
+                    html += `
+                        <div class="item">
+                            <div class="item-header">
+                                <div class="item-title">ট্রেন আইটেম #${count}</div>
+                                <div class="item-actions">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteItem('trains', '${doc.id}')">মুছুন</button>
+                                </div>
+                            </div>
+                            <div class="item-description">${train.text}</div>
+                            <div class="item-meta">
+                                তারিখ: ${date} | লিংক: <a href="${train.link}" target="_blank" style="color: var(--primary);">${train.link}</a>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                countElement.textContent = count;
+            } catch (error) {
+                console.log("[v0] Load trains error:", error);
+                document.getElementById('trainsList').innerHTML = '<div class="loading">লোড করতে সমস্যা হয়েছে</div>';
+                document.getElementById('trainCount').textContent = '0';
+            }
         }
     </script>
 </body>
