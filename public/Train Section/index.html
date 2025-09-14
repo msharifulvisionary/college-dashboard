@@ -128,17 +128,22 @@
                 let trainHTML = '';
                 querySnapshot.forEach((doc) => {
                     const train = doc.data();
-                    const link = train.link ? toDirectDriveUrl(train.link) : '#';
-                    const title = train.title || 'শিরোনাম নেই';
-                    const description = train.description || '';
+                    const text = train.text || 'কোন টেক্সট নেই';
                     
-                    const fullText = description ? `${title} - ${description}` : title;
-                    
-                    trainHTML += `
-                        <a href="${link}" target="_blank" class="train-text" onclick="handleTrainClick(this)">
-                            📝 ${fullText}
-                        </a>
-                    `;
+                    if (train.link && train.link.trim() !== '') {
+                        const link = toDirectDriveUrl(train.link);
+                        trainHTML += `
+                            <a href="${link}" target="_blank" class="train-text" onclick="handleTrainClick(this)">
+                                ${text}
+                            </a>
+                        `;
+                    } else {
+                        trainHTML += `
+                            <span class="train-text">
+                                ${text}
+                            </span>
+                        `;
+                    }
                 });
 
                 trackContainer.innerHTML = trainHTML;
